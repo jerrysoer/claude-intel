@@ -40,15 +40,35 @@ npm run cli -- --no-open                  # don't auto-open browser
 
 ## MCP Server
 
-Add Claude Intel as an MCP server so Claude Code can answer spending questions directly:
+Add Claude Intel as an MCP server so Claude can answer spending questions directly in conversation.
+
+### Claude Code
 
 ```bash
 claude mcp add claude-intel -- npx tsx ~/claude-intel/bin/cli.ts --mcp
 ```
 
-(Replace `~/claude-intel` with wherever you cloned the repo.)
+### Claude Desktop
 
-Then ask Claude Code:
+Add to your config file:
+
+- **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
+
+```json
+{
+  "mcpServers": {
+    "claude-intel": {
+      "command": "npx",
+      "args": ["tsx", "/full/path/to/claude-intel/bin/cli.ts", "--mcp"]
+    }
+  }
+}
+```
+
+Replace `/full/path/to/claude-intel` with your actual clone path, then restart Claude Desktop.
+
+### Try it
 
 > "How much have I spent this month?"
 > "Compare my costs with OpenAI."
