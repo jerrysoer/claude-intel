@@ -163,11 +163,19 @@ export default function ExplainerApp() {
       <footer className="border-t border-border py-12">
         <div className="mx-auto max-w-4xl px-4 text-center sm:px-6">
           <p className="font-serif text-lg text-text-primary mb-2">
-            Built with claude-intel
+            claude-intel
           </p>
           <p className="font-sans text-sm text-text-tertiary leading-relaxed max-w-md mx-auto">
             An open-source intelligence dashboard for Claude Code usage.
-            Track tokens, compare costs, discover patterns.
+            Built by{" "}
+            <a
+              href="https://scrolly.to"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-text-secondary hover:text-text-primary transition-colors"
+            >
+              scrolly.to
+            </a>
           </p>
           <div className="mt-6 flex justify-center gap-4">
             <a

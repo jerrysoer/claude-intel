@@ -7,6 +7,17 @@ export function startServer(port: number, outDir: string): void {
   const app = express();
   app.use(express.json());
 
+  // Security headers
+  app.use((_req, res, next) => {
+    res.setHeader(
+      "Content-Security-Policy",
+      "default-src 'self'; script-src 'self' 'unsafe-inline' https://cloud.umami.is; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'"
+    );
+    res.setHeader("X-Content-Type-Options", "nosniff");
+    res.setHeader("X-Frame-Options", "DENY");
+    next();
+  });
+
   const dataPath = join(outDir, "data.json");
 
   // API: serve aggregated data
@@ -26,8 +37,8 @@ export function startServer(port: number, outDir: string): void {
       writeFileSync(dataPath, JSON.stringify(data, null, 2));
       res.json(data);
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      res.status(500).json({ error: message });
+      console.error("Refresh failed:", err);
+      res.status(500).json({ error: "Failed to refresh data" });
     }
   });
 

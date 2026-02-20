@@ -23,7 +23,17 @@ const opts = program.opts<{
   mcp: boolean;
 }>();
 
+function validateDate(value: string | undefined, label: string): void {
+  if (value && !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    console.error(`Invalid ${label} date: "${value}" — expected YYYY-MM-DD`);
+    process.exit(1);
+  }
+}
+
 async function main() {
+  validateDate(opts.from, "--from");
+  validateDate(opts.to, "--to");
+
   if (opts.mcp) {
     const { startMCPServer } = await import("../mcp/server");
     await startMCPServer();

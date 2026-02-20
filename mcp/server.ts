@@ -3,9 +3,18 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { z } from "zod";
 import { aggregate } from "../lib/aggregator";
 
+const datePattern = /^\d{4}-\d{2}-\d{2}$/;
 const dateRangeSchema = {
-  from: z.string().optional().describe("Start date (YYYY-MM-DD)"),
-  to: z.string().optional().describe("End date (YYYY-MM-DD)"),
+  from: z
+    .string()
+    .regex(datePattern, "Must be YYYY-MM-DD format")
+    .optional()
+    .describe("Start date (YYYY-MM-DD)"),
+  to: z
+    .string()
+    .regex(datePattern, "Must be YYYY-MM-DD format")
+    .optional()
+    .describe("End date (YYYY-MM-DD)"),
 };
 
 export async function startMCPServer(): Promise<void> {
