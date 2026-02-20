@@ -77,7 +77,7 @@ All tools accept optional `from` and `to` date parameters (YYYY-MM-DD).
 
 ### Privacy
 
-Claude Intel runs entirely on your local machine. It reads your local `~/.claude/projects/` session files and serves the dashboard on `127.0.0.1`. No data is sent to any external service.
+claude-intel collects no telemetry. Everything runs on localhost. No data leaves your machine.
 
 ### Cost Disclaimer
 
@@ -100,6 +100,10 @@ npm run cli          # Run CLI with tsx
 npm run build        # Build static export
 ```
 
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).
+
 ## License
 
-MIT
+MIT — Built by [@jerrysoer](https://github.com/jerrysoer)

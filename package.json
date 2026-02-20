@@ -1,18 +1,39 @@
 {
   "name": "claude-intel",
   "version": "0.1.0",
-  "private": true,
+  "description": "Claude Code spending intelligence — track tokens, compare costs, discover patterns",
   "bin": {
     "claude-intel": "./dist/bin/cli.js"
   },
+  "files": [
+    "dist/",
+    "out/",
+    "LICENSE",
+    "README.md"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "build:server": "tsc -p tsconfig.server.json",
-    "cli": "tsx bin/cli.ts"
+    "cli": "tsx bin/cli.ts",
+    "prepublishOnly": "npm run build && npm run build:server"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jerrysoer/claude-intel.git"
+  },
+  "keywords": [
+    "claude-code",
+    "ai",
+    "cost-analytics",
+    "developer-tools",
+    "mcp",
+    "token-usage"
+  ],
+  "author": "jerrysoer",
+  "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.1",
     "commander": "^13.1.0",

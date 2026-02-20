@@ -1,8 +1,18 @@
 #!/usr/bin/env node
 import { program } from "commander";
-import { mkdirSync, writeFileSync } from "fs";
-import { join } from "path";
+import { existsSync, mkdirSync, writeFileSync } from "fs";
+import { dirname, join } from "path";
 import { aggregate } from "../lib/aggregator";
+
+/** Find the package root (works for both tsx and compiled dist/) */
+function findPackageRoot(): string {
+  let dir = __dirname;
+  while (dir !== dirname(dir)) {
+    if (existsSync(join(dir, "package.json"))) return dir;
+    dir = dirname(dir);
+  }
+  return process.cwd();
+}
 
 program
   .name("claude-intel")
@@ -44,8 +54,8 @@ async function main() {
   console.log("Aggregating Claude Code usage data...");
   const data = await aggregate(opts.from, opts.to);
 
-  // Write to out/data.json
-  const outDir = join(process.cwd(), "out");
+  // Write to out/data.json (relative to package root, not cwd)
+  const outDir = join(findPackageRoot(), "out");
   mkdirSync(outDir, { recursive: true });
   const dataPath = join(outDir, "data.json");
   writeFileSync(dataPath, JSON.stringify(data, null, 2));
