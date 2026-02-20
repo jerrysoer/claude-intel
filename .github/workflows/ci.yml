@@ -28,16 +28,18 @@ jobs:
 
       - name: Verify package size under 1MB
         run: |
-          SIZE=$(npm pack --dry-run 2>&1 | grep 'unpacked size' | grep -oE '[0-9.]+ [kKmMgG]B' | head -1)
-          echo "Package size: $SIZE"
-          # Extract numeric value and unit
-          VALUE=$(echo "$SIZE" | grep -oE '[0-9.]+')
-          UNIT=$(echo "$SIZE" | grep -oE '[kKmMgG]B')
-          # Fail if size is in MB and >= 1
+          OUTPUT=$(npm pack --dry-run 2>&1)
+          PACKED=$(echo "$OUTPUT" | grep 'package size' | grep -oE '[0-9.]+ [kKmMgG]B' | head -1)
+          UNPACKED=$(echo "$OUTPUT" | grep 'unpacked size' | grep -oE '[0-9.]+ [kKmMgG]B' | head -1)
+          echo "Package size (tarball): $PACKED"
+          echo "Unpacked size: $UNPACKED"
+          # Check tarball size (not unpacked)
+          VALUE=$(echo "$PACKED" | grep -oE '[0-9.]+')
+          UNIT=$(echo "$PACKED" | grep -oE '[kKmMgG]B')
           if echo "$UNIT" | grep -qiE '^[mMgG]'; then
             if [ "$(echo "$VALUE >= 1" | bc)" -eq 1 ]; then
-              echo "FAIL: Package size $SIZE exceeds 1MB limit"
+              echo "FAIL: Tarball size $PACKED exceeds 1MB limit"
               exit 1
             fi
           fi
-          echo "PASS: Package size $SIZE is under 1MB"
+          echo "PASS: Tarball size $PACKED is under 1MB"
