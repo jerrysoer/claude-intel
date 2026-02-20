@@ -281,6 +281,9 @@ export default function CostLabSection({ data }: CostLabSectionProps) {
             {formatTokens(data.totals.totalTokens)} tokens &middot;{" "}
             {data.totals.sessionCount} sessions
           </p>
+          <p className="mt-2 font-sans text-xs text-text-tertiary/70">
+            Estimated at API rates — actual cost depends on your plan
+          </p>
         </div>
 
         {/* Model rebalancing slider */}

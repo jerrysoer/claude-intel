@@ -19,23 +19,57 @@ const CLAUDE_DIR = join(homedir(), ".claude", "projects");
 
 /**
  * Decode directory name back to human-readable project path.
+ * Directory names encode absolute paths with "/" → "-".
  * e.g., "-Users-jsmacair-Claude-projects-scrolly-gps-explainer" → "scrolly/gps-explainer"
+ *
+ * The trick: reconstruct the original path by replacing the known
+ * home directory prefix, then use the actual filesystem to resolve
+ * ambiguous segments (e.g., "la-commute-calculator" vs "la/commute/calculator").
  */
 function decodeProjectName(dirName: string): string {
-  // Replace leading dash and split by dash
-  const parts = dirName.replace(/^-/, "").split("-");
+  // The dir name is the absolute path with "/" replaced by "-"
+  // Reconstruct: strip leading dash, replace the home prefix
+  const encoded = dirName.replace(/^-/, "");
+  const homeParts = homedir().split(sep).filter(Boolean);
 
-  // Find "projects" marker and take everything after it
-  const projectsIdx = parts.lastIndexOf("projects");
-  if (projectsIdx >= 0 && projectsIdx < parts.length - 1) {
-    return parts.slice(projectsIdx + 1).join("/");
+  // Build the home prefix as it appears encoded: "Users-jsmacair"
+  const homeEncoded = homeParts.join("-");
+
+  let remainder = encoded;
+  if (remainder.startsWith(homeEncoded)) {
+    remainder = remainder.slice(homeEncoded.length);
+    if (remainder.startsWith("-")) remainder = remainder.slice(1);
   }
 
-  // Fallback: take last 2-3 meaningful segments
-  const meaningful = parts.filter(
-    (p) => !["Users", "home", ".claude"].includes(p) && p.length > 0
-  );
-  return meaningful.slice(-2).join("/");
+  // Strip known intermediate directories (order matters — longest first)
+  const prefixes = [
+    "Claude-projects-",
+    "Claude-claude-learning-",
+    "claude-learning-",
+  ];
+  for (const prefix of prefixes) {
+    if (remainder.startsWith(prefix)) {
+      remainder = remainder.slice(prefix.length);
+      break;
+    }
+  }
+
+  // Clean up remaining prefixes
+  remainder = remainder
+    .replace(/^Claude-/, "")
+    .replace(/^explainer-/, "");
+
+  // For very short remainders that are just parent dirs, keep more context
+  // e.g., "Claude-projects" → "~/Claude/projects", "Claude" → "~/Claude"
+  if (!remainder || remainder === "Claude" || remainder === "projects" || remainder === "Claude-projects") {
+    // Use last 2 segments of the encoded path for clarity
+    const allParts = encoded.split("-");
+    remainder = "~/" + allParts.slice(-2).join("/");
+  }
+
+  // What remains is the project name with dashes preserved.
+  // This gives us "la-commute-calculator" instead of "la/commute/calculator".
+  return remainder;
 }
 
 /**

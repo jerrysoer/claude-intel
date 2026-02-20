@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { RefreshCw } from "lucide-react";
 import type { IntelPayload } from "@/data/types";
 import ThemeToggle from "@/components/shared/ThemeToggle";
 import SectionNav, { type NavSection } from "@/components/shared/SectionNav";
@@ -28,42 +29,61 @@ export default function ExplainerApp() {
   const [data, setData] = useState<IntelPayload | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
-    async function loadData() {
-      try {
-        const res = await fetch("/api/data");
-        if (res.ok) {
-          const json = await res.json();
-          setData(json);
-          setLoading(false);
-          return;
-        }
-      } catch {
-        // API not available, try inline data
-      }
-
-      // Fall back to inline data for static export
-      const inline = (window as unknown as Record<string, unknown>).__INTEL_DATA__ as IntelPayload | undefined;
-      if (inline) {
-        setData(inline);
+  const loadData = useCallback(async () => {
+    try {
+      const res = await fetch("/api/data");
+      if (res.ok) {
+        const json = await res.json();
+        setData(json);
+        setError(null);
         setLoading(false);
         return;
       }
-
-      setError("Could not load data. Make sure the API is running or data is embedded.");
-      setLoading(false);
+    } catch {
+      // API not available, try inline data
     }
 
-    loadData();
+    // Fall back to inline data for static export
+    const inline = (window as unknown as Record<string, unknown>)
+      .__INTEL_DATA__ as IntelPayload | undefined;
+    if (inline) {
+      setData(inline);
+      setLoading(false);
+      return;
+    }
+
+    setError("Could not load data. Make sure the API is running or data is embedded.");
+    setLoading(false);
   }, []);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    try {
+      const res = await fetch("/api/refresh", { method: "POST" });
+      if (res.ok) {
+        const json = await res.json();
+        setData(json);
+      }
+    } catch {
+      // Refresh failed — keep existing data
+    }
+    setRefreshing(false);
+  };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white dark:bg-black flex items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black dark:border-white mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-400">Loading data...</p>
+          <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-text-tertiary border-t-transparent" />
+          <p className="font-sans text-sm text-text-tertiary">
+            Loading intelligence report...
+          </p>
         </div>
       </div>
     );
@@ -71,52 +91,109 @@ export default function ExplainerApp() {
 
   if (error || !data) {
     return (
-      <div className="min-h-screen bg-white dark:bg-black flex items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center px-4">
         <div className="text-center">
-          <p className="text-red-600 dark:text-red-400 mb-4">{error || "No data available"}</p>
+          <p className="mb-4 font-sans text-base text-text-secondary">
+            {error ?? "Failed to load data."}
+          </p>
+          <button
+            onClick={() => {
+              setLoading(true);
+              loadData();
+            }}
+            className="rounded-lg border border-border bg-bg-card px-6 py-2.5 font-sans text-sm font-medium text-text-secondary transition-all hover:border-text-tertiary/40 hover:text-text-primary"
+          >
+            Retry
+          </button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="relative">
+    <>
       <ThemeToggle />
       <SectionNav sections={NAV_SECTIONS} />
-      
+
+      {/* Refresh button */}
+      <button
+        onClick={handleRefresh}
+        disabled={refreshing}
+        className="fixed top-4 right-18 z-50 flex h-11 w-11 items-center justify-center rounded-full border transition-all duration-200 hover:scale-105 disabled:opacity-50"
+        style={{
+          backgroundColor: "var(--bg-card)",
+          borderColor: "var(--border)",
+          color: "var(--text-primary)",
+        }}
+        aria-label="Refresh data"
+        title="Re-scan usage data"
+      >
+        <RefreshCw
+          size={16}
+          className={refreshing ? "animate-spin" : ""}
+        />
+      </button>
+
       <main>
-        <section id="hero">
-          <HeroSection data={data} />
-        </section>
-        
-        <section id="timeline">
-          <TimelineSection data={data} />
-        </section>
-        
-        <section id="models">
-          <ModelMixSection data={data} />
-        </section>
-        
-        <section id="cost-lab">
-          <CostLabSection data={data} />
-        </section>
-        
-        <section id="projects">
-          <ProjectIntelSection data={data} />
-        </section>
-        
-        <section id="cache">
-          <CacheSection data={data} />
-        </section>
-        
-        <section id="insights">
-          <InsightsSection data={data} />
-        </section>
-        
-        <section id="deep-dive">
-          <DeepDiveSection data={data} />
-        </section>
+        <HeroSection data={data} />
+
+        <div className="border-t border-border" />
+        <TimelineSection data={data} />
+
+        <div className="border-t border-border" />
+        <ModelMixSection data={data} />
+
+        <div className="border-t border-border" />
+        <CostLabSection data={data} />
+
+        <div className="border-t border-border" />
+        <ProjectIntelSection data={data} />
+
+        <div className="border-t border-border" />
+        <CacheSection data={data} />
+
+        <div className="border-t border-border" />
+        <InsightsSection data={data} />
+
+        <div className="border-t border-border" />
+        <DeepDiveSection data={data} />
       </main>
-    </div>
+
+      {/* Footer */}
+      <footer className="border-t border-border py-12">
+        <div className="mx-auto max-w-4xl px-4 text-center sm:px-6">
+          <p className="font-serif text-lg text-text-primary mb-2">
+            Built with claude-intel
+          </p>
+          <p className="font-sans text-sm text-text-tertiary leading-relaxed max-w-md mx-auto">
+            An open-source intelligence dashboard for Claude Code usage.
+            Track tokens, compare costs, discover patterns.
+          </p>
+          <div className="mt-6 flex justify-center gap-4">
+            <a
+              href="https://github.com/jerrysoer/claude-intel"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-sans text-xs text-text-secondary hover:text-text-primary hover:underline underline-offset-2 transition-colors"
+            >
+              GitHub
+            </a>
+            <span className="text-text-tertiary">&middot;</span>
+            <a
+              href="https://scrolly.to"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-sans text-xs text-text-secondary hover:text-text-primary hover:underline underline-offset-2 transition-colors"
+            >
+              scrolly.to
+            </a>
+          </div>
+          <p className="mt-8 font-mono text-xs text-text-tertiary">
+            {data.dateRange.start} → {data.dateRange.end} &middot;{" "}
+            {data.totals.turnCount.toLocaleString()} turns analyzed
+          </p>
+        </div>
+      </footer>
+    </>
   );
 }

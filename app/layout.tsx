@@ -25,7 +25,10 @@ const jetbrainsMono = JetBrains_Mono({
   weight: ["400", "500", "700"],
 });
 
+const siteUrl = "https://github.com/jerrysoer/claude-intel";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "Claude Intel — Your AI Spending Intelligence Report",
   description:
     "Understand your Claude Code spending. Track tokens, compare costs across providers, and discover usage patterns with an interactive analytics dashboard.",

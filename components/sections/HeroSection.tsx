@@ -93,8 +93,11 @@ export default function HeroSection({ data }: { data: IntelPayload }) {
         </div>
 
         {/* Token count */}
-        <p className="mb-10 font-mono text-lg text-text-secondary sm:text-xl">
+        <p className="mb-2 font-mono text-lg text-text-secondary sm:text-xl">
           {formatTokens(totals.totalTokens)} tokens
+        </p>
+        <p className="mb-10 font-sans text-xs text-text-tertiary">
+          Estimated at API rates — actual cost depends on your plan
         </p>
 
         {/* Summary pills */}
