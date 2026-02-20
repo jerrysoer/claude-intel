@@ -22,10 +22,7 @@ Claude Code gives you zero visibility into what you're actually spending. Claude
 ## Quick Start
 
 ```bash
-git clone https://github.com/jerrysoer/claude-intel.git
-cd claude-intel
-npm install && npm run build
-npm run cli
+npx claude-intel
 ```
 
 Opens `http://localhost:3737` with your usage dashboard. Data is read from `~/.claude/projects/`.
@@ -33,9 +30,18 @@ Opens `http://localhost:3737` with your usage dashboard. Data is read from `~/.c
 ### Options
 
 ```bash
-npm run cli -- --from 2026-02-01          # custom start date
-npm run cli -- --port 8080                # custom port
-npm run cli -- --no-open                  # don't auto-open browser
+npx claude-intel --from 2026-02-01       # custom start date
+npx claude-intel --port 8080             # custom port
+npx claude-intel --no-open               # don't auto-open browser
+```
+
+### Install from source
+
+```bash
+git clone https://github.com/jerrysoer/claude-intel.git
+cd claude-intel
+npm install && npm run build
+npm run cli
 ```
 
 ## MCP Server
@@ -45,7 +51,7 @@ Add Claude Intel as an MCP server so Claude can answer spending questions direct
 ### Claude Code
 
 ```bash
-claude mcp add claude-intel -- npx tsx ~/claude-intel/bin/cli.ts --mcp
+claude mcp add claude-intel -- npx claude-intel --mcp
 ```
 
 ### Claude Desktop
@@ -60,13 +66,13 @@ Add to your config file:
   "mcpServers": {
     "claude-intel": {
       "command": "npx",
-      "args": ["tsx", "/full/path/to/claude-intel/bin/cli.ts", "--mcp"]
+      "args": ["claude-intel", "--mcp"]
     }
   }
 }
 ```
 
-Replace `/full/path/to/claude-intel` with your actual clone path, then restart Claude Desktop.
+Restart Claude Desktop after saving.
 
 ### Try it
 
