@@ -22,7 +22,10 @@ Claude Code gives you zero visibility into what you're actually spending. Claude
 ## Quick Start
 
 ```bash
-npx claude-intel
+git clone https://github.com/jerrysoer/claude-intel.git
+cd claude-intel
+npm install && npm run build
+npm run cli
 ```
 
 Opens `http://localhost:3737` with your usage dashboard. Data is read from `~/.claude/projects/`.
@@ -30,9 +33,9 @@ Opens `http://localhost:3737` with your usage dashboard. Data is read from `~/.c
 ### Options
 
 ```bash
-npx claude-intel --from 2026-02-01          # custom start date
-npx claude-intel --port 8080                # custom port
-npx claude-intel --no-open                  # don't auto-open browser
+npm run cli -- --from 2026-02-01          # custom start date
+npm run cli -- --port 8080                # custom port
+npm run cli -- --no-open                  # don't auto-open browser
 ```
 
 ## MCP Server
@@ -40,8 +43,10 @@ npx claude-intel --no-open                  # don't auto-open browser
 Add Claude Intel as an MCP server so Claude Code can answer spending questions directly:
 
 ```bash
-claude mcp add claude-intel -- npx tsx /path/to/claude-intel/bin/cli.ts --mcp
+claude mcp add claude-intel -- npx tsx ~/claude-intel/bin/cli.ts --mcp
 ```
+
+(Replace `~/claude-intel` with wherever you cloned the repo.)
 
 Then ask Claude Code:
 
