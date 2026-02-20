@@ -2,7 +2,7 @@
 
 **Claude Intel shows you what Claude Code is actually costing — locally, privately, interactively.**
 
-![Claude Intel Dashboard](public/hero.png)
+![Claude Intel Dashboard](hero.png)
 
 Track tokens, compare costs across providers, and discover usage patterns — all from your local Claude Code session data.
 

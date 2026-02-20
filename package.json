@@ -1,6 +1,6 @@
 {
   "name": "claude-intel",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Claude Code spending intelligence — track tokens, compare costs, discover patterns",
   "bin": {
     "claude-intel": "./dist/bin/cli.js"
@@ -38,13 +38,7 @@
     "@modelcontextprotocol/sdk": "^1.12.1",
     "commander": "^13.1.0",
     "express": "^5.1.0",
-    "glob": "^11.0.1",
-    "lucide-react": "^0.574.0",
-    "next": "16.1.6",
-    "open": "^10.1.0",
-    "react": "19.2.3",
-    "react-dom": "19.2.3",
-    "recharts": "^3.7.0"
+    "open": "^10.1.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -54,6 +48,12 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
+    "lucide-react": "^0.574.0",
+    "next": "16.1.6",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-is": "^19.2.4",
+    "recharts": "^3.7.0",
     "tailwindcss": "^4",
     "tsx": "^4.19.0",
     "typescript": "^5"

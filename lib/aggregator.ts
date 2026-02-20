@@ -1,4 +1,5 @@
 import { readdir, stat } from "fs/promises";
+import { existsSync } from "fs";
 import { join, sep } from "path";
 import { homedir } from "os";
 import { parseJSONLFile } from "./parser";
@@ -16,6 +17,9 @@ import type {
 } from "../data/types";
 
 const CLAUDE_DIR = join(homedir(), ".claude", "projects");
+
+/** Optional progress callback for CLI feedback */
+export type ProgressCallback = (message: string) => void;
 
 /**
  * Decode directory name back to human-readable project path.
@@ -122,9 +126,34 @@ async function findJSONLFiles(baseDir: string): Promise<{ path: string; project:
  */
 export async function aggregate(
   fromDate?: string,
-  toDate?: string
+  toDate?: string,
+  onProgress?: ProgressCallback
 ): Promise<IntelPayload> {
+  // Check if the data directory exists
+  if (!existsSync(CLAUDE_DIR)) {
+    const msg = `No Claude Code data found at ${CLAUDE_DIR}\nHave you run Claude Code yet? Session logs appear after your first conversation.`;
+    onProgress?.(msg);
+    // Return empty payload instead of crashing
+    return {
+      generatedAt: new Date().toISOString(),
+      dateRange: { start: fromDate ?? "", end: toDate ?? "" },
+      totals: { inputTokens: 0, outputTokens: 0, cacheReadTokens: 0, cacheWriteTokens: 0, totalTokens: 0, estimatedCost: 0, sessionCount: 0, turnCount: 0 },
+      daily: [],
+      byModel: [],
+      byProject: [],
+      cacheEfficiency: { hitRate: 0, savedAmount: 0, uncachedCost: 0, actualCost: 0, totalCacheReads: 0, totalCacheWrites: 0 },
+      insights: [],
+      whatIf: [],
+      sessions: [],
+    };
+  }
+
   const jsonlFiles = await findJSONLFiles(CLAUDE_DIR);
+
+  // Report scan progress
+  const projectNames = new Set(jsonlFiles.map((f) => f.project));
+  onProgress?.(`Scanning ${projectNames.size} projects...`);
+
   const allEntries: ParsedEntry[] = [];
 
   // Parse all files
@@ -137,6 +166,10 @@ export async function aggregate(
       allEntries.push(entry);
     }
   }
+
+  // Report parse results
+  const uniqueSessions = new Set(allEntries.map((e) => e.sessionId));
+  onProgress?.(`Parsed ${uniqueSessions.size} sessions (${allEntries.length.toLocaleString()} turns)`);
 
   // Sort by timestamp
   allEntries.sort((a, b) => a.timestamp.localeCompare(b.timestamp));

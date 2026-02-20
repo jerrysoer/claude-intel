@@ -45,7 +45,15 @@ export function startServer(port: number, outDir: string): void {
   // Serve static files (Next.js export)
   app.use(express.static(outDir));
 
-  app.listen(port, "127.0.0.1", () => {
+  const server = app.listen(port, "127.0.0.1", () => {
     console.log(`claude-intel dashboard → http://127.0.0.1:${port}`);
+  });
+
+  server.on("error", (err: NodeJS.ErrnoException) => {
+    if (err.code === "EADDRINUSE") {
+      console.error(`Port ${port} is already in use. Try: npx claude-intel --port ${port + 1}`);
+      process.exit(1);
+    }
+    throw err;
   });
 }

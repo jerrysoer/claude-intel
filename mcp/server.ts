@@ -17,18 +17,35 @@ const dateRangeSchema = {
     .describe("End date (YYYY-MM-DD)"),
 };
 
+/** Wrap an MCP tool handler with error handling */
+function withErrorHandling<T>(
+  handler: (args: T) => Promise<{ content: { type: "text"; text: string }[] }>
+) {
+  return async (args: T) => {
+    try {
+      return await handler(args);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      return {
+        content: [{ type: "text" as const, text: `Error: ${message}` }],
+        isError: true,
+      };
+    }
+  };
+}
+
 export async function startMCPServer(): Promise<void> {
   const server = new McpServer({
     name: "claude-intel",
-    version: "0.1.0",
+    version: "0.2.0",
   });
 
   // 1. Spend summary
   server.tool(
     "get_spend_summary",
-    "Get total spend and token counts for a date range",
+    "Get total spend and token counts for a date range. Use this when the user asks how much they've spent or wants a spending overview.",
     dateRangeSchema,
-    async ({ from, to }) => {
+    withErrorHandling(async ({ from, to }) => {
       const data = await aggregate(from, to);
       return {
         content: [
@@ -45,15 +62,15 @@ export async function startMCPServer(): Promise<void> {
           },
         ],
       };
-    }
+    })
   );
 
   // 2. Daily breakdown
   server.tool(
     "get_daily_breakdown",
-    "Get daily cost and token breakdown",
+    "Get daily cost and token breakdown over time. Use this when the user wants to see spending trends, daily usage patterns, or track costs day-by-day.",
     dateRangeSchema,
-    async ({ from, to }) => {
+    withErrorHandling(async ({ from, to }) => {
       const data = await aggregate(from, to);
       return {
         content: [
@@ -70,15 +87,15 @@ export async function startMCPServer(): Promise<void> {
           },
         ],
       };
-    }
+    })
   );
 
   // 3. Model breakdown
   server.tool(
     "get_model_breakdown",
-    "Get per-model cost and token split",
+    "Get per-model cost and token split. Use this when the user asks which models they use most, or wants to understand their Opus vs Sonnet vs Haiku mix.",
     dateRangeSchema,
-    async ({ from, to }) => {
+    withErrorHandling(async ({ from, to }) => {
       const data = await aggregate(from, to);
       return {
         content: [
@@ -95,18 +112,18 @@ export async function startMCPServer(): Promise<void> {
           },
         ],
       };
-    }
+    })
   );
 
   // 4. Project costs
   server.tool(
     "get_project_costs",
-    "Get per-project cost breakdown, optionally limited to top N",
+    "Get per-project cost breakdown, optionally limited to top N. Use this when the user asks which project costs the most or wants a project-level spending report.",
     {
       ...dateRangeSchema,
       top: z.number().optional().describe("Return only top N projects by cost"),
     },
-    async ({ from, to, top }) => {
+    withErrorHandling(async ({ from, to, top }) => {
       const data = await aggregate(from, to);
       let projects = data.byProject;
       if (top && top > 0) {
@@ -129,15 +146,15 @@ export async function startMCPServer(): Promise<void> {
           },
         ],
       };
-    }
+    })
   );
 
   // 5. Compare costs (What If)
   server.tool(
     "compare_costs",
-    "Compare actual Anthropic costs with hypothetical costs from other providers",
+    "Compare actual Anthropic costs with hypothetical costs from OpenAI, Google, and other providers. Use this when the user asks to compare providers or wants to know if they'd save money switching.",
     dateRangeSchema,
-    async ({ from, to }) => {
+    withErrorHandling(async ({ from, to }) => {
       const data = await aggregate(from, to);
       return {
         content: [
@@ -155,15 +172,15 @@ export async function startMCPServer(): Promise<void> {
           },
         ],
       };
-    }
+    })
   );
 
   // 6. Cache efficiency
   server.tool(
     "get_cache_efficiency",
-    "Get cache hit rate and cost savings from prompt caching",
+    "Get cache hit rate and cost savings from prompt caching. Use this when the user asks about caching performance or wants to know how much caching saves them.",
     dateRangeSchema,
-    async ({ from, to }) => {
+    withErrorHandling(async ({ from, to }) => {
       const data = await aggregate(from, to);
       return {
         content: [
@@ -180,15 +197,15 @@ export async function startMCPServer(): Promise<void> {
           },
         ],
       };
-    }
+    })
   );
 
   // 7. Insights
   server.tool(
     "get_insights",
-    "Get behavioral patterns and usage insights",
+    "Get behavioral patterns and usage insights like peak hours, marathon sessions, and model mismatch alerts. Use this when the user wants tips or patterns about their usage habits.",
     dateRangeSchema,
-    async ({ from, to }) => {
+    withErrorHandling(async ({ from, to }) => {
       const data = await aggregate(from, to);
       return {
         content: [
@@ -205,7 +222,7 @@ export async function startMCPServer(): Promise<void> {
           },
         ],
       };
-    }
+    })
   );
 
   // Connect via stdio

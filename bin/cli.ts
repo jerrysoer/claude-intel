@@ -17,7 +17,7 @@ function findPackageRoot(): string {
 program
   .name("claude-intel")
   .description("Claude Code usage intelligence dashboard")
-  .version("0.1.1")
+  .version("0.2.0")
   .option("--from <date>", "start date (YYYY-MM-DD)")
   .option("--to <date>", "end date (YYYY-MM-DD)")
   .option("--port <number>", "server port", "3737")
@@ -50,9 +50,8 @@ async function main() {
     return;
   }
 
-  // Run aggregator
-  console.log("Aggregating Claude Code usage data...");
-  const data = await aggregate(opts.from, opts.to);
+  // Run aggregator with progress feedback
+  const data = await aggregate(opts.from, opts.to, (msg) => console.log(msg));
 
   // Write to out/data.json (relative to package root, not cwd)
   const outDir = join(findPackageRoot(), "out");
