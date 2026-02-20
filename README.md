@@ -79,8 +79,6 @@ All tools accept optional `from` and `to` date parameters (YYYY-MM-DD).
 
 Claude Intel runs entirely on your local machine. It reads your local `~/.claude/projects/` session files and serves the dashboard on `127.0.0.1`. No data is sent to any external service.
 
-Analytics (Umami) respects your browser's Do Not Track setting.
-
 ### Cost Disclaimer
 
 All costs are **estimated at Anthropic API rates**. Your actual cost depends on your plan:

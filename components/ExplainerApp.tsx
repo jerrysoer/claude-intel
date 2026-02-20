@@ -166,16 +166,7 @@ export default function ExplainerApp() {
             claude-intel
           </p>
           <p className="font-sans text-sm text-text-tertiary leading-relaxed max-w-md mx-auto">
-            An open-source intelligence dashboard for Claude Code usage.
-            Built by{" "}
-            <a
-              href="https://scrolly.to"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-text-secondary hover:text-text-primary transition-colors"
-            >
-              scrolly.to
-            </a>
+            Open-source spending intelligence for Claude Code.
           </p>
           <div className="mt-6 flex justify-center gap-4">
             <a
@@ -187,14 +178,9 @@ export default function ExplainerApp() {
               GitHub
             </a>
             <span className="text-text-tertiary">&middot;</span>
-            <a
-              href="https://scrolly.to"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-sans text-xs text-text-secondary hover:text-text-primary hover:underline underline-offset-2 transition-colors"
-            >
-              scrolly.to
-            </a>
+            <span className="font-sans text-xs text-text-tertiary">
+              MIT License
+            </span>
           </div>
           <p className="mt-8 font-mono text-xs text-text-tertiary">
             {data.dateRange.start} → {data.dateRange.end} &middot;{" "}
