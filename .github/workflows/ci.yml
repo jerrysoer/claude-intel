@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build dashboard
+        run: npm run build
+
+      - name: Build server
+        run: npm run build:server
+
+      - name: Verify package size under 1MB
+        run: |
+          SIZE=$(npm pack --dry-run 2>&1 | grep 'unpacked size' | grep -oE '[0-9.]+ [kKmMgG]B' | head -1)
+          echo "Package size: $SIZE"
+          # Extract numeric value and unit
+          VALUE=$(echo "$SIZE" | grep -oE '[0-9.]+')
+          UNIT=$(echo "$SIZE" | grep -oE '[kKmMgG]B')
+          # Fail if size is in MB and >= 1
+          if echo "$UNIT" | grep -qiE '^[mMgG]'; then
+            if [ "$(echo "$VALUE >= 1" | bc)" -eq 1 ]; then
+              echo "FAIL: Package size $SIZE exceeds 1MB limit"
+              exit 1
+            fi
+          fi
+          echo "PASS: Package size $SIZE is under 1MB"

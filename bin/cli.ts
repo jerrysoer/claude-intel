@@ -17,7 +17,7 @@ function findPackageRoot(): string {
 program
   .name("claude-intel")
   .description("Claude Code usage intelligence dashboard")
-  .version("0.2.0")
+  .version("0.2.1")
   .option("--from <date>", "start date (YYYY-MM-DD)")
   .option("--to <date>", "end date (YYYY-MM-DD)")
   .option("--port <number>", "server port", "3737")

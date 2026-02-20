@@ -2,7 +2,7 @@
 
 **Claude Intel shows you what Claude Code is actually costing — locally, privately, interactively.**
 
-![Claude Intel Dashboard](hero.png)
+![Claude Intel Dashboard](https://raw.githubusercontent.com/jerrysoer/claude-intel/main/hero.png)
 
 Track tokens, compare costs across providers, and discover usage patterns — all from your local Claude Code session data.
 
@@ -19,6 +19,11 @@ Claude Code gives you zero visibility into what you're actually spending. Claude
 - **Deep dive** — Sortable, searchable session table with per-turn detail
 - **MCP server** — Ask Claude Code "how much have I spent?" directly in conversation
 
+## Prerequisites
+
+- **Node.js 18+**
+- **At least one Claude Code conversation** — claude-intel reads session logs from `~/.claude/projects/`. If you haven't used Claude Code yet, there's nothing to analyze.
+
 ## Quick Start
 
 ```bash
@@ -30,9 +35,12 @@ Opens `http://localhost:3737` with your usage dashboard. Data is read from `~/.c
 ### Options
 
 ```bash
+npx claude-intel --help                  # show all options
 npx claude-intel --from 2026-02-01       # custom start date
+npx claude-intel --to 2026-02-14         # custom end date
 npx claude-intel --port 8080             # custom port
 npx claude-intel --no-open               # don't auto-open browser
+npx claude-intel --mcp                   # start MCP server instead of dashboard
 ```
 
 ### Install from source
@@ -56,7 +64,7 @@ claude mcp add claude-intel -- npx claude-intel --mcp
 
 ### Claude Desktop
 
-Add to your config file:
+Add to your config file (create it if it doesn't exist):
 
 - **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
 - **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
@@ -112,6 +120,32 @@ All costs are **estimated at Anthropic API rates**. Your actual cost depends on 
 - **Claude Pro** ($20/mo) — Included usage with rate limits
 - **Claude Max** ($100-200/mo) — Unlimited usage
 - **API** — Pay per token at the rates shown
+
+## Troubleshooting
+
+### Dashboard shows $0 / 0 tokens
+
+claude-intel reads from `~/.claude/projects/`. If the dashboard is empty:
+
+1. **No Claude Code usage yet** — Run at least one conversation in Claude Code, then relaunch.
+2. **Custom install path** — If Claude Code stores data somewhere other than `~/.claude/`, claude-intel won't find it.
+3. **Date range too narrow** — Try without `--from`/`--to` to scan all available data.
+
+### Port already in use
+
+```bash
+npx claude-intel --port 8080  # use a different port
+```
+
+### MCP server not responding
+
+Make sure you're running `--mcp` mode, not the dashboard:
+
+```bash
+claude mcp add claude-intel -- npx claude-intel --mcp
+```
+
+Restart Claude Code or Claude Desktop after adding the MCP config.
 
 ## Stack
 

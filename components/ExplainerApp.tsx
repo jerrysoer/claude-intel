@@ -110,6 +110,47 @@ export default function ExplainerApp() {
     );
   }
 
+  // Empty state: data loaded but no sessions found
+  if (data.totals.turnCount === 0) {
+    return (
+      <>
+        <ThemeToggle />
+        <div className="flex min-h-screen items-center justify-center px-4">
+          <div className="mx-auto max-w-md text-center">
+            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl border border-border bg-bg-card">
+              <span className="text-2xl">📊</span>
+            </div>
+            <h1 className="mb-3 font-serif text-2xl text-text-primary">
+              No session data found yet
+            </h1>
+            <p className="mb-6 font-sans text-sm leading-relaxed text-text-secondary">
+              claude-intel reads usage logs from <code className="rounded bg-bg-card px-1.5 py-0.5 text-xs font-mono border border-border">~/.claude/projects/</code>. Run a conversation in Claude Code, then come back here to see your spending dashboard.
+            </p>
+            <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
+              <button
+                onClick={() => {
+                  setLoading(true);
+                  loadData();
+                }}
+                className="rounded-lg border border-border bg-bg-card px-6 py-2.5 font-sans text-sm font-medium text-text-secondary transition-all hover:border-text-tertiary/40 hover:text-text-primary"
+              >
+                Refresh
+              </button>
+              <a
+                href="https://docs.anthropic.com/en/docs/claude-code"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-lg border border-border bg-bg-card px-6 py-2.5 font-sans text-sm font-medium text-text-secondary transition-all hover:border-text-tertiary/40 hover:text-text-primary"
+              >
+                Claude Code docs
+              </a>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
       <ThemeToggle />
