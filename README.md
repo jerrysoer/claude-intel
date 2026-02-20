@@ -2,6 +2,8 @@
 
 **Claude Intel shows you what Claude Code is actually costing — locally, privately, interactively.**
 
+![Claude Intel Dashboard](public/hero.png)
+
 Track tokens, compare costs across providers, and discover usage patterns — all from your local Claude Code session data.
 
 Claude Code gives you zero visibility into what you're actually spending. Claude Intel reads your local session logs, calculates costs at API rates, and serves an interactive dashboard on localhost. No data leaves your machine.
