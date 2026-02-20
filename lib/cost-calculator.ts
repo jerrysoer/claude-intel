@@ -3,8 +3,8 @@ import {
   getModelTier,
   competitorPricing,
   providers,
-} from "@/data/pricing";
-import type { TokenCounts, ProviderComparison, ModelTokens } from "@/data/types";
+} from "../data/pricing";
+import type { TokenCounts, ProviderComparison, ModelTokens } from "../data/types";
 
 /**
  * Calculate actual Anthropic cost for a set of tokens on a given model.

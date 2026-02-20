@@ -3,7 +3,7 @@ import type {
   DailySummary,
   ModelTokens,
   Insight,
-} from "@/data/types";
+} from "../data/types";
 
 /**
  * Detect behavioral patterns from usage data.

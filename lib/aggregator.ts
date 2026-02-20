@@ -4,7 +4,7 @@ import { homedir } from "os";
 import { parseJSONLFile } from "./parser";
 import { calculateActualCost, calculateWhatIf } from "./cost-calculator";
 import { detectInsights } from "./insights";
-import { getModelDisplayName, getAnthropicPricing } from "@/data/pricing";
+import { getModelDisplayName, getAnthropicPricing } from "../data/pricing";
 import type {
   IntelPayload,
   ParsedEntry,
@@ -13,7 +13,7 @@ import type {
   ProjectSummary,
   CacheEfficiency,
   SessionDetail,
-} from "@/data/types";
+} from "../data/types";
 
 const CLAUDE_DIR = join(homedir(), ".claude", "projects");
 

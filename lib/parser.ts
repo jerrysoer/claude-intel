@@ -1,6 +1,6 @@
 import { createReadStream } from "fs";
 import { createInterface } from "readline";
-import type { ParsedEntry } from "@/data/types";
+import type { ParsedEntry } from "../data/types";
 
 /**
  * Stream-based JSONL parser. Reads line-by-line, never loading
