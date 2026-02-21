@@ -46,11 +46,21 @@ npx claude-intel --mcp                   # start MCP server instead of dashboard
 ### Install from source
 
 ```bash
+# Clone the repo
 git clone https://github.com/jerrysoer/claude-intel.git
+
+# Install dependencies
 cd claude-intel
-npm install && npm run build
+npm install
+
+# Build the dashboard and server
+npm run build && npm run build:server
+
+# Run it
 npm run cli
 ```
+
+Opens `http://localhost:3737` with the dashboard.
 
 ## MCP Server
 
