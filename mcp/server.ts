@@ -225,6 +225,32 @@ export async function startMCPServer(): Promise<void> {
     })
   );
 
+  // 8. Hook recommendations
+  server.tool(
+    "get_hook_recommendations",
+    "Get personalized Claude Code hook recommendations based on your projects and usage patterns. Returns ready-to-use bash scripts for guardrails like secret detection, RLS reminders, and cost alerts.",
+    dateRangeSchema,
+    withErrorHandling(async ({ from, to }) => {
+      const data = await aggregate(from, to);
+      return {
+        content: [
+          {
+            type: "text" as const,
+            text: JSON.stringify(
+              {
+                dateRange: data.dateRange,
+                detectedProjects: data.detectedProjects,
+                recommendations: data.hooks,
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    })
+  );
+
   // Connect via stdio
   const transport = new StdioServerTransport();
   await server.connect(transport);

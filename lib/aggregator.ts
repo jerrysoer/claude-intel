@@ -5,6 +5,7 @@ import { homedir } from "os";
 import { parseJSONLFile } from "./parser";
 import { calculateActualCost, calculateWhatIf } from "./cost-calculator";
 import { detectInsights } from "./insights";
+import { detectHookRecommendations } from "./hooks";
 import { getModelDisplayName, getAnthropicPricing } from "../data/pricing";
 import type {
   IntelPayload,
@@ -143,6 +144,8 @@ export async function aggregate(
       byProject: [],
       cacheEfficiency: { hitRate: 0, savedAmount: 0, uncachedCost: 0, actualCost: 0, totalCacheReads: 0, totalCacheWrites: 0 },
       insights: [],
+      hooks: [],
+      detectedProjects: [],
       whatIf: [],
       sessions: [],
     };
@@ -408,6 +411,9 @@ export async function aggregate(
   // ── Insights ──
   const insights = detectInsights(allEntries, daily, byModel, totals);
 
+  // ── Hook recommendations ──
+  const { hooks, detectedProjects } = detectHookRecommendations(allEntries, insights, totals);
+
   return {
     generatedAt: new Date().toISOString(),
     dateRange: { start: startDate, end: endDate },
@@ -417,6 +423,8 @@ export async function aggregate(
     byProject,
     cacheEfficiency,
     insights,
+    hooks,
+    detectedProjects,
     whatIf,
     sessions,
   };

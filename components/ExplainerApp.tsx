@@ -12,6 +12,7 @@ import CostLabSection from "@/components/sections/CostLabSection";
 import ProjectIntelSection from "@/components/sections/ProjectIntelSection";
 import CacheSection from "@/components/sections/CacheSection";
 import InsightsSection from "@/components/sections/InsightsSection";
+import HooksSection from "@/components/sections/HooksSection";
 import DeepDiveSection from "@/components/sections/DeepDiveSection";
 
 const NAV_SECTIONS: NavSection[] = [
@@ -22,6 +23,7 @@ const NAV_SECTIONS: NavSection[] = [
   { id: "projects", label: "Projects", shortLabel: "Projects" },
   { id: "cache", label: "Cache", shortLabel: "Cache" },
   { id: "insights", label: "Insights", shortLabel: "Insights" },
+  { id: "hooks", label: "Hooks", shortLabel: "Hooks" },
   { id: "deep-dive", label: "Deep Dive", shortLabel: "Detail" },
 ];
 
@@ -195,6 +197,9 @@ export default function ExplainerApp() {
 
         <div className="border-t border-border" />
         <InsightsSection data={data} />
+
+        <div className="border-t border-border" />
+        <HooksSection data={data} />
 
         <div className="border-t border-border" />
         <DeepDiveSection data={data} />

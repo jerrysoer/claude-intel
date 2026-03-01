@@ -82,6 +82,39 @@ export interface Insight {
   icon: string; // lucide icon name
 }
 
+// ── Project type detection ──
+
+export type ProjectType = "nextjs" | "supabase" | "python" | "node" | "generic";
+
+export interface DetectedProject {
+  project: string;        // display name from aggregator
+  cwd: string;            // first seen cwd
+  types: ProjectType[];   // can be multiple (e.g., ["nextjs", "supabase"])
+}
+
+// ── Hook recommendations ──
+
+export type HookCategory = "universal" | "stack" | "data-driven";
+export type HookAction = "block" | "warn";
+
+export interface HookTemplate {
+  id: string;              // e.g., "secret-detection"
+  name: string;            // e.g., "Secret Detection Guard"
+  description: string;
+  category: HookCategory;
+  trigger: string;         // e.g., "PostToolUse"
+  matcher: string;         // e.g., "Write|Edit"
+  action: HookAction;
+  script: string;          // full bash script
+  icon: string;            // lucide icon name
+}
+
+export interface HookRecommendation {
+  hook: HookTemplate;
+  reasoning: string;       // personalized: "You had 168 marathon sessions..."
+  relevance: number;       // 0-1, for sorting
+}
+
 // ── Provider comparison ──
 
 export interface ProviderComparison {
@@ -135,6 +168,8 @@ export interface IntelPayload {
   byProject: ProjectSummary[];
   cacheEfficiency: CacheEfficiency;
   insights: Insight[];
+  hooks: HookRecommendation[];
+  detectedProjects: DetectedProject[];
   whatIf: ProviderComparison[];
   sessions: SessionDetail[];
 }
